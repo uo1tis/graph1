@@ -1,3 +1,9 @@
+import Queue
+
+import networkx as nx
+import matplotlib.pyplot as plt
+
+
 class Graph:
     # def __init__(self, I, J, n):
     #     self.I = I
@@ -11,6 +17,7 @@ class Graph:
         self.I = []
         self.J = []
         self.arcs = arcs
+        self.graph_orientation = 0
         for i in xrange(self.m):
             self.I.append(self.arcs[i][0])
             self.J.append(self.arcs[i][1])
@@ -75,11 +82,58 @@ class Graph:
                         sel[k] = a
         return ans
 
-    def bfs(self):
-        pass
+    def bfs(self, v):
+        used = [False for i in xrange(self.n)]
+        q = Queue()
+        if (used[v]):
+            return
+        q.put(v)
+        used[v] = True
+        ans = []
+        while (not q.empty()):
+            v = q.get()
+            ans.append(v+1)
+            for w in self.findV(v):
+                if (used[w]):
+                    continue
+                q.put(w)
+                used[w] = True
+        return ans
+    def findV(self, v):
+        h = []
+        h.append(int(self.H[v]))
+        i = 0
+        while (self.L[h[i]] != -1):
+            h.append(self.L[h[i]])
+            i+=1
+        ans = []
+        for i in h:
+            ans.append(int(self.J[i]))
+        return ans
 
     def dfs(self):
         pass
 
     def dekstr(self):
         pass
+    def color(self):
+        pass
+    def draw(self):
+        if(self.graph_orientation):
+            g = nx.Graph()
+            g.add_weighted_edges_from(self.arcs)
+            nx.draw_networkx(g)
+            plt.show()
+        else:
+            g = nx.DiGraph()
+            g.add_weighted_edges_from(self.arcs)
+            nx.draw_networkx(g)
+            plt.show()
+
+    def makeNotOrientation(self):
+        self.graph_orientation = 1
+        self.IJ = []
+        for i in xrange(self.m):
+            self.IJ.append(self.I[i])
+        for i in xrange(self.m, self.m *2):
+            self.IJ.append(self.J[i-self.m])
